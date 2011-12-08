@@ -37,7 +37,7 @@ class PlayerDeath:
         self.killer = splitKill[0]
         self.victim = splitKill[2]
 
-        if 'Roadkill' in splitLine[4]:
+        if 'Roadkill' in splitLine[4]: 
             self.weapon = "Roadkill"
         else:
             self.weapon = splitKill[4].rstrip("}]\n")
