@@ -47,6 +47,13 @@ class PlayerDeath:
         return "%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.killer,
                                         self.victim, self.weapon, self.headshot)
         
+def writeCsv(deathEvents):
+    outputFile = open("output.csv", "w")
+    for event in deathEvents:
+        csvData = event.toCsv()
+        outputFile.write(csvData)
+    outputFile.close()
+    print "Done writing CSV."
 
 def main():
 
@@ -73,13 +80,5 @@ def main():
             deathEvents.append(PlayerDeath(line))
 
     writeCsv(deathEvents)
-
-def writeCsv(deathEvents):
-    outputFile = open("output.csv", "w")
-    for event in deathEvents:
-        csvData = event.toCsv()
-        outputFile.write(csvData)
-    outputFile.close()
-    print "Done writing CSV."
 
 main()
