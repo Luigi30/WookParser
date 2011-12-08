@@ -12,7 +12,6 @@ def main():
                         unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),
                         )
 
-#    eventLogFile = codecs.open("20111101_events.log", encoding='utf-8', mode='r')
     eventLogFile = open("20111101_events.log", mode='r')
 
     playerKilledCount = 0
