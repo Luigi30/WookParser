@@ -76,7 +76,7 @@ def main():
         line = re.sub(RE_XML_ILLEGAL, "", line)
 
         if "PlayerKilled" in line:
-            print "Processing event %d..." % eventCounter
+            print "Processing event %s..." % eventCounter
             deathEvents.append(PlayerDeath(line))
 
     writeCsv(deathEvents)
