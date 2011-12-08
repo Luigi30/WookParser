@@ -1,1 +1,5 @@
 This file was created by PyCharm 1.5.4 for binding GitHub repository
+
+This thing doesn't do much yet besides spit out a line for each event in the events log. Welp.
+
+Eventually it'll output a fancy CSV file full of events and junk for fancy charts and graphs but it ain't there yet.
