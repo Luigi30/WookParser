@@ -1,15 +1,99 @@
-class PlayerDeath:
+########################################################################
+#   BF3Events
+#
+#   There should be a class in here for every possible event in the log:
+#       PlayerKilled
+#       PlayerJoin
+#       PlayerLeave
+#       PlayerSuicide
+#       PlayerSwitchedTeams
+#       PlayerSwitchedSquads
+########################################################################
 
-    #A PlayerDeath event consists of the following data:
+class BF3BaseEvent:
+    def writeCsv(self, eventList):
+        #one type entry for each type of event.
+        outputFile = open((self.type + ".csv"), "a")
+        csvData = self.toCsv()
+        outputFile.write(csvData)
+        outputFile.close()
+
+class PlayerJoinEvent(BF3BaseEvent):
     #eventDate: date of event
     #eventTime: time of event
-    #killer: killer name
+    #playerName: player name
+    
+    def __init__(self, type, eventData):
+        self.type = type
+
+        splitLine = eventData.split("\t")
+        splitTime = splitLine[1].split(" ")
+
+        #get the time
+        self.eventDate = splitTime[0]
+        self.eventTime = splitTime[1]
+        self.playerName = splitLine[3]
+
+    def toCsv(self):
+        #format: date,time,killer,victim,weapon,headshot
+        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+
+class PlayerLeaveEvent(BF3BaseEvent):
+    #eventDate: date of event
+    #eventTime: time of event
+    #playerName: player name
+
+    def __init__(self, type, eventData):
+        self.type = type
+
+        splitLine = eventData.split("\t")
+        splitTime = splitLine[1].split(" ")
+
+        #get the time
+        self.eventDate = splitTime[0]
+        self.eventTime = splitTime[1]
+        self.playerName = splitLine[3]
+
+    def toCsv(self):
+        #format: date,time,killer,victim,weapon,headshot
+        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+
+class PlayerSuicideEvent(BF3BaseEvent):
+    #eventDate: date of event
+    #eventTime: time of event
+    #playerName: player name
+
+    def __init__(self, type, eventData):
+        self.type = type
+
+        splitLine = eventData.split("\t")
+        splitTime = splitLine[1].split(" ")
+
+        #get the time
+        self.eventDate = splitTime[0]
+        self.eventTime = splitTime[1]
+        self.playerName = splitLine[3]
+
+    def toCsv(self):
+        #format: date,time,killer,victim,weapon,headshot
+        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+
+class PlayerKilledEvent(BF3BaseEvent):
+
+    #A PlayerKilled event consists of the following data:
+    #eventDate: date of event
+    #eventTime: time of event
+    #playerName: killer name
     #victim: victim name
     #weapon: the murder weapon
     #headshot: was it a headshot true/false?
 
-    def __init__(self, deathLine):
-    # unicode invalid characters
+    #Input is a de-nulled event line from the log file.
+
+    def __init__(self, type, deathLine):
+
+        #set the type
+        self.type = type
 
         splitLine = deathLine.split("\t")
         splitTime = splitLine[1].split(" ")
@@ -29,26 +113,17 @@ class PlayerDeath:
         #   Capped1 killed IncredulousDylan [{MISSING: global.Weapons.svd} | -HEADSHOT-]\n
         #or
         #   Scinon killed Sosnitoonsa [Roadkill]
-        
+
         splitKill = splitLine[4].split(" ")
-        self.killer = splitKill[0]
+        self.playerName = splitKill[0]
         self.victim = splitKill[2]
 
-        if 'Roadkill' in splitLine[4]: 
+        if 'Roadkill' in splitLine[4]:
             self.weapon = "Roadkill"
         else:
             self.weapon = splitKill[4].rstrip("}]\n")
 
     def toCsv(self):
         #format: date,time,killer,victim,weapon,headshot
-        return "%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.killer,
+        return "%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName,
                                         self.victim, self.weapon, self.headshot)
-
-def writeCsv(deathEvents):
-    outputFile = open("output.csv", "w")
-    outputFile.write("date,time,killer,victim,weapon,headshot\n")
-    for event in deathEvents:
-        csvData = event.toCsv()
-        outputFile.write(csvData)
-    outputFile.close()
-    print "Done writing CSV."
