@@ -18,6 +18,10 @@ class BF3BaseEvent:
         outputFile.write(csvData)
         outputFile.close()
 
+    def toCsv(self):
+        #Standard toCsv function for events with only an eventDate/Time/playerName.
+        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+
 class PlayerJoinEvent(BF3BaseEvent):
     #eventDate: date of event
     #eventTime: time of event
@@ -33,10 +37,6 @@ class PlayerJoinEvent(BF3BaseEvent):
         self.eventDate = splitTime[0]
         self.eventTime = splitTime[1]
         self.playerName = splitLine[3]
-
-    def toCsv(self):
-        #format: date,time,killer,victim,weapon,headshot
-        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
 
 class PlayerLeaveEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -54,10 +54,6 @@ class PlayerLeaveEvent(BF3BaseEvent):
         self.eventTime = splitTime[1]
         self.playerName = splitLine[3]
 
-    def toCsv(self):
-        #format: date,time,killer,victim,weapon,headshot
-        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
-
 class PlayerSuicideEvent(BF3BaseEvent):
     #eventDate: date of event
     #eventTime: time of event
@@ -73,10 +69,6 @@ class PlayerSuicideEvent(BF3BaseEvent):
         self.eventDate = splitTime[0]
         self.eventTime = splitTime[1]
         self.playerName = splitLine[3]
-
-    def toCsv(self):
-        #format: date,time,killer,victim,weapon,headshot
-        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
 
 class PlayerKilledEvent(BF3BaseEvent):
 
