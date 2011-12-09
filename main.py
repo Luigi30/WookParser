@@ -21,14 +21,6 @@ def processEventLogFile(eventLogFile):
     playerSwitchedSquadsCsv = open("playerSwitchedSquads.csv", "w")
     playerKilledCsv = open("playerKilled.csv", "w")
 
-    #write headers to CSV files.
-    playerJoinCsv.write("date,time,playerName\n")
-    playerLeaveCsv.write("date,time,playerName\n")
-    playerSuicideCsv.write("date,time,playerName\n")
-    playerSwitchedTeamsCsv.write("date,time,playerName,from,to\n")
-    playerSwitchedSquadsCsv.write("date,time,playerName,from,to\n")
-    playerKilledCsv.write("date,time,playerName,victim,weapon,headshot\n")
-
     playerJoinCsv.close()
     playerLeaveCsv.close()
     playerSuicideCsv.close()

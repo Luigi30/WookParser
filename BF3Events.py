@@ -20,7 +20,7 @@ class BF3BaseEvent:
 
     def toCsv(self):
         #Standard toCsv function for events with only an eventDate/Time/playerName.
-        return "%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+        return "NULL,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
 
 class PlayerJoinEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -36,7 +36,7 @@ class PlayerJoinEvent(BF3BaseEvent):
         #get the time
         self.eventDate = splitTime[0]
         self.eventTime = splitTime[1]
-        self.playerName = splitLine[3]
+        self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
 class PlayerLeaveEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -52,7 +52,7 @@ class PlayerLeaveEvent(BF3BaseEvent):
         #get the time
         self.eventDate = splitTime[0]
         self.eventTime = splitTime[1]
-        self.playerName = splitLine[3]
+        self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
 class PlayerSuicideEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -68,7 +68,7 @@ class PlayerSuicideEvent(BF3BaseEvent):
         #get the time
         self.eventDate = splitTime[0]
         self.eventTime = splitTime[1]
-        self.playerName = splitLine[3]
+        self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
 class PlayerKilledEvent(BF3BaseEvent):
 
@@ -91,7 +91,9 @@ class PlayerKilledEvent(BF3BaseEvent):
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        mysqlDate = "%s-%s-%s" % (splitTime[0][6:10], splitTime[0][0:2], splitTime[0][3:5])
+
+        self.eventDate = mysqlDate
         self.eventTime = splitTime[1]
 
         #is it a headshot?
@@ -117,5 +119,5 @@ class PlayerKilledEvent(BF3BaseEvent):
 
     def toCsv(self):
         #format: date,time,killer,victim,weapon,headshot
-        return "%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName,
+        return "NULL,%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName,
                                         self.victim, self.weapon, self.headshot)
