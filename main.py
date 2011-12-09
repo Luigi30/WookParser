@@ -3,7 +3,6 @@ import BF3Events
 
 def processEventLogFile(eventLogFile):
     #Import a log file object and do whatever processing we're doing.
-    #In this case, we're going to start by outputting PlayerKilled events to a CSV file.
 
     deathEvents = []
     joinEvents = []
