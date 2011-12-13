@@ -38,7 +38,7 @@ def processEventLogFile(eventLogFile):
 
         if "PlayerLeave" in line:
             print "Event %s: PlayerLeave" % eventCounter
-            joinEvents.append(BF3Events.PlayerLeaveEvent("PlayerLeave", line))
+            leaveEvents.append(BF3Events.PlayerLeaveEvent("PlayerLeave", line))
 
         if "PlayerSuicide" in line:
             print "Event %s: PlayerSuicide" % eventCounter
@@ -46,31 +46,39 @@ def processEventLogFile(eventLogFile):
 
         if "PlayerSwitchedTeams" in line:
             print "Event %s: PlayerSwitchedTeams" % eventCounter
-            #teamSwitchEvents.append(BF3Events.PlayerSwitchedTeamsEvent(line))
+            teamSwitchEvents.append(BF3Events.PlayerSwitchedTeamsEvent("PlayerSwitchedTeams", line))
 
         if "PlayerSwitchedSquads" in line:
             print "Event %s: PlayerSwitchedSquads" % eventCounter
-            #squadSwitchEvents.append(BF3Events.PlayerSwitchedSquadsEvent(line))
+            squadSwitchEvents.append(BF3Events.PlayerSwitchedSquadsEvent("PlayerSwitchedSquads", line))
 
         if "PlayerKilled" in line:
             print "Event %s: PlayerKilled" % eventCounter
             deathEvents.append(BF3Events.PlayerKilledEvent("PlayerKilled", line))
 
     print "Processing PlayerJoin events..."
-    for event in joinEvents:
-        event.writeCsv(joinEvents)
+#    for event in joinEvents:
+    BF3Events.writeCsv(joinEvents)
 
     print "Processing PlayerLeave events..."
-    for event in leaveEvents:
-        event.writeCsv(leaveEvents)
+#    for event in leaveEvents:
+    BF3Events.writeCsv(leaveEvents)
 
     print "Processing PlayerSuicide events..."
-    for event in suicideEvents:
-        event.writeCsv(suicideEvents)
+#    for event in suicideEvents:
+    BF3Events.writeCsv(suicideEvents)
 
     print "Processing PlayerKilled events..."
-    for event in deathEvents:
-        event.writeCsv(deathEvents)
+ #   for event in deathEvents:
+    BF3Events.writeCsv(deathEvents)
+
+    print "Processing PlayerSwitchedTeams events..."
+#    for event in teamSwitchEvents:
+    BF3Events.writeCsv(teamSwitchEvents)
+
+    print "Processing PlayerSwitchedSquads events..."
+#    for event in squadSwitchEvents:
+    BF3Events.writeCsv(squadSwitchEvents)
 
     print "Done processing."
 

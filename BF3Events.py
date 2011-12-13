@@ -11,13 +11,6 @@
 ########################################################################
 
 class BF3BaseEvent:
-    def writeCsv(self, eventList):
-        #one type entry for each type of event.
-        outputFile = open((self.type + ".csv"), "a")
-        csvData = self.toCsv()
-        outputFile.write(csvData)
-        outputFile.close()
-
     def toCsv(self):
         #Standard toCsv function for events with only an eventDate/Time/playerName.
         return "NULL,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
@@ -70,6 +63,64 @@ class PlayerSuicideEvent(BF3BaseEvent):
         self.eventTime = splitTime[1]
         self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
+class PlayerSwitchedTeamsEvent(BF3BaseEvent):
+    #eventDate: date of event
+    #eventTime: time of event
+    #playerName: player name
+    #oldTeam: old team
+    #newTeam: new team
+
+    def __init__(self, type, eventData):
+        self.type = type
+
+        splitLine = eventData.split("\t")
+        splitTime = splitLine[1].split(" ")
+
+        #get the time
+        self.eventDate = splitTime[0]
+        self.eventTime = splitTime[1]
+
+        extData = splitLine[4].split(" ")
+
+        self.playerName = extData[0]
+
+        if extData[4] == "Neutral":
+            self.oldTeam = "Neutral"
+            self.newTeam = extData[6] + " " + extData[7]
+        else:
+            self.oldTeam = extData[4] + " " + extData[5]
+            self.newTeam = extData[7] + " " + extData[8]
+
+    def toCsv(self):
+        return "NULL,%s,%s,%s,%s,%s" % (self.eventDate, self.eventTime, self.playerName, self.oldTeam, self.newTeam)
+
+class PlayerSwitchedSquadsEvent(BF3BaseEvent):
+    #eventDate: date of event
+    #eventTime: time of event
+    #playerName: player name
+    #oldSquad: old team
+    #newSquad: new team
+
+    def __init__(self, type, eventData):
+        self.type = type
+
+        splitLine = eventData.split("\t")
+        splitTime = splitLine[1].split(" ")
+
+        #get the time
+        self.eventDate = splitTime[0]
+        self.eventTime = splitTime[1]
+
+        extData = splitLine[4].split(" ")
+
+        self.playerName = extData[0]
+
+        self.oldSquad = extData[4]
+        self.newSquad = extData[6]
+
+    def toCsv(self):
+        return "NULL,%s,%s,%s,%s,%s" % (self.eventDate, self.eventTime, self.playerName, self.oldSquad, self.newSquad)
+
 class PlayerKilledEvent(BF3BaseEvent):
 
     #A PlayerKilled event consists of the following data:
@@ -121,3 +172,11 @@ class PlayerKilledEvent(BF3BaseEvent):
         #format: date,time,killer,victim,weapon,headshot
         return "NULL,%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName,
                                         self.victim, self.weapon, self.headshot)
+
+def writeCsv(eventList):
+    type = eventList[0].type #fetch the type of event list we've been sent and use that as the CSV name
+    outputFile = open((type + ".csv"), "a")
+    for event in eventList:
+        csvData = event.toCsv()
+        outputFile.write(csvData)
+    outputFile.close()    
