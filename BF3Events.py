@@ -13,7 +13,7 @@
 class BF3BaseEvent:
     def toCsv(self):
         #Standard toCsv function for events with only an eventDate/Time/playerName.
-        return "NULL,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName)
+        return "NULL,\"%s\",\"%s\",\"%s\"\n" % (self.eventDate, self.eventTime, self.playerName)
 
 class PlayerJoinEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -92,7 +92,8 @@ class PlayerSwitchedTeamsEvent(BF3BaseEvent):
             self.newTeam = extData[7] + " " + extData[8]
 
     def toCsv(self):
-        return "NULL,%s,%s,%s,%s,%s" % (self.eventDate, self.eventTime, self.playerName, self.oldTeam, self.newTeam)
+        return "NULL,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"" %\
+               (self.eventDate, self.eventTime, self.playerName, self.oldTeam, self.newTeam)
 
 class PlayerSwitchedSquadsEvent(BF3BaseEvent):
     #eventDate: date of event
@@ -119,7 +120,8 @@ class PlayerSwitchedSquadsEvent(BF3BaseEvent):
         self.newSquad = extData[6]
 
     def toCsv(self):
-        return "NULL,%s,%s,%s,%s,%s" % (self.eventDate, self.eventTime, self.playerName, self.oldSquad, self.newSquad)
+        return "NULL,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"" %\
+               (self.eventDate, self.eventTime, self.playerName, self.oldSquad, self.newSquad)
 
 class PlayerKilledEvent(BF3BaseEvent):
 
@@ -163,15 +165,30 @@ class PlayerKilledEvent(BF3BaseEvent):
         self.playerName = splitKill[0]
         self.victim = splitKill[2]
 
+        #special cases because DICE is inconsistent :dice:
         if 'Roadkill' in splitLine[4]:
             self.weapon = "Roadkill"
+        elif 'Assault' in splitLine[4]:
+            self.weapon = "F2000 Assault"
+        elif 'LMG' in splitLine[4]:
+            self.weapon = "M60 LMG"
+        elif 'SAW' in splitLine[4]:
+            self.weapon = "M249 SAW"
+        elif 'Snayperskaya' in splitLine[4]:
+            self.weapon = "SV98 Snayperskaya"
+        elif 'Combat' in splitLine[4]:
+            self.weapon = "870 Combat"
+        elif 'M1911' in splitLine[4]:
+            self.weapon = "WWII M1911 .45"
+        elif 'Pistol' in splitLine[4]:
+            self.weapon = "M9 Pistol"
         else:
             self.weapon = splitKill[4].rstrip("}]\n")
 
     def toCsv(self):
         #format: date,time,killer,victim,weapon,headshot
-        return "NULL,%s,%s,%s,%s,%s,%s\n" % (self.eventDate, self.eventTime, self.playerName,
-                                        self.victim, self.weapon, self.headshot)
+        return "NULL,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n" \
+            % (self.eventDate, self.eventTime, self.playerName, self.victim, self.weapon, self.headshot)
 
 def writeCsv(eventList):
     type = eventList[0].type #fetch the type of event list we've been sent and use that as the CSV name

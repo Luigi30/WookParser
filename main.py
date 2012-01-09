@@ -1,8 +1,14 @@
 import re
 import BF3Events
+import urllib2
 
 def processEventLogFile(eventLogFile):
     #Import a log file object and do whatever processing we're doing.
+
+    #Fetch the goon list.
+    response = urllib2.urlopen('http://reg.davejk.net/Tools/List')
+    html = response.read()
+    goonList = html.split("\r\n")
 
     deathEvents = []
     joinEvents = []
@@ -33,28 +39,60 @@ def processEventLogFile(eventLogFile):
         line = removeNulls(line) #remove the u0000 characters
 
         if "PlayerJoin" in line:
-            print "Event %s: PlayerJoin" % eventCounter
-            joinEvents.append(BF3Events.PlayerJoinEvent("PlayerJoin", line))
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                if name in line:
+                    print "Event %s: PlayerJoin" % eventCounter
+                    joinEvents.append(BF3Events.PlayerJoinEvent("PlayerJoin", line))
+                    break
+            else:
+                print "Event %s: PlayerJoin (Not involving goons, not written.)" % eventCounter
 
         if "PlayerLeave" in line:
-            print "Event %s: PlayerLeave" % eventCounter
-            leaveEvents.append(BF3Events.PlayerLeaveEvent("PlayerLeave", line))
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                if name in line:
+                    print "Event %s: PlayerLeave" % eventCounter
+                    leaveEvents.append(BF3Events.PlayerLeaveEvent("PlayerLeave", line))
+                    break
+            else:
+                print "Event %s: PlayerLeave (Not involving goons, not written.)" % eventCounter
 
         if "PlayerSuicide" in line:
-            print "Event %s: PlayerSuicide" % eventCounter
-            suicideEvents.append(BF3Events.PlayerSuicideEvent("PlayerSuicide", line))
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                if name in line:
+                    print "Event %s: PlayerSuicide" % eventCounter
+                    suicideEvents.append(BF3Events.PlayerSuicideEvent("PlayerSuicide", line))
+                    break
+            else:
+                print "Event %s: PlayerSuicide (Not involving goons, not written.)" % eventCounter
 
         if "PlayerSwitchedTeams" in line:
-            print "Event %s: PlayerSwitchedTeams" % eventCounter
-            teamSwitchEvents.append(BF3Events.PlayerSwitchedTeamsEvent("PlayerSwitchedTeams", line))
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                if name in line:
+                    print "Event %s: PlayerSwitchedTeams" % eventCounter
+                    teamSwitchEvents.append(BF3Events.PlayerSwitchedTeamsEvent("PlayerSwitchedTeams", line))
+                    break
+            else:
+                print "Event %s: PlayerSwitchedTeams (Not involving goons, not written.)" % eventCounter
 
         if "PlayerSwitchedSquads" in line:
-            print "Event %s: PlayerSwitchedSquads" % eventCounter
-            squadSwitchEvents.append(BF3Events.PlayerSwitchedSquadsEvent("PlayerSwitchedSquads", line))
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                if name in line:
+                    print "Event %s: PlayerSwitchedSquads" % eventCounter
+                    squadSwitchEvents.append(BF3Events.PlayerSwitchedSquadsEvent("PlayerSwitchedSquads", line))
+                    break
+            else:
+                print "Event %s: PlayerSwitchedSquads (Not involving goons, not written.)" % eventCounter
 
         if "PlayerKilled" in line:
-            print "Event %s: PlayerKilled" % eventCounter
-            deathEvents.append(BF3Events.PlayerKilledEvent("PlayerKilled", line))
+            i = -1
+            for name in goonList[0:(goonList.__len__() - 1)]:
+                i += 1
+                if name in line:
+                    print "Event %s: PlayerKilled (%s, entry %s)" % (eventCounter, name, i)
+                    deathEvents.append(BF3Events.PlayerKilledEvent("PlayerKilled", line))
+                    break
+            else:
+                print "Event %s: PlayerKilled (Not involving goons, not written.)" % eventCounter
 
     print "Processing PlayerJoin events..."
 #    for event in joinEvents:
