@@ -1,9 +1,14 @@
 import re
 import BF3Events
 import urllib2
+import config
+import _mysql
 
 def processEventLogFile(eventLogFile):
     #Import a log file object and do whatever processing we're doing.
+
+    #Connect to the DB
+    db = _mysql.connect(config.MYSQL_IP, config.MYSQL_USER, config.MYSQL_PASS, 'bf3')
 
     #Fetch the goon list.
     response = urllib2.urlopen('http://reg.davejk.net/Tools/List')
@@ -96,32 +101,36 @@ def processEventLogFile(eventLogFile):
 
     print "Processing PlayerJoin events..."
 #    for event in joinEvents:
-    BF3Events.writeCsv(joinEvents)
+#    BF3Events.writeCsv(joinEvents)
+    BF3Events.sqlInsertEvents(db, joinEvents)
 
     print "Processing PlayerLeave events..."
 #    for event in leaveEvents:
-    BF3Events.writeCsv(leaveEvents)
+#    BF3Events.writeCsv(leaveEvents)
+    BF3Events.sqlInsertEvents(db, leaveEvents)
 
     print "Processing PlayerSuicide events..."
 #    for event in suicideEvents:
-    BF3Events.writeCsv(suicideEvents)
+#    BF3Events.writeCsv(suicideEvents)
+    BF3Events.sqlInsertEvents(db, suicideEvents)
 
     print "Processing PlayerKilled events..."
  #   for event in deathEvents:
-    BF3Events.writeCsv(deathEvents)
+#    BF3Events.writeCsv(deathEvents)
+    BF3Events.sqlInsertEvents(db, deathEvents)
 
     print "Processing PlayerSwitchedTeams events..."
 #    for event in teamSwitchEvents:
-    BF3Events.writeCsv(teamSwitchEvents)
+#    BF3Events.writeCsv(teamSwitchEvents)
 
     print "Processing PlayerSwitchedSquads events..."
 #    for event in squadSwitchEvents:
-    BF3Events.writeCsv(squadSwitchEvents)
+#    BF3Events.writeCsv(squadSwitchEvents)
 
     print "Done processing."
 
 def removeNulls(line):
-    #procon is really dumb and spits out a u0000 null after every character!?
+    #procon is really dumb and spits out a u0000 null after every character
     #run this function on log files we're working on so python can understand them
 
     RE_XML_ILLEGAL =    u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \

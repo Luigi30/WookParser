@@ -22,12 +22,13 @@ class PlayerJoinEvent(BF3BaseEvent):
     
     def __init__(self, type, eventData):
         self.type = type
+        self.tableName = 'playerjoin'
 
         splitLine = eventData.split("\t")
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
         self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
@@ -38,12 +39,13 @@ class PlayerLeaveEvent(BF3BaseEvent):
 
     def __init__(self, type, eventData):
         self.type = type
+        self.tableName = 'playerleave'
 
         splitLine = eventData.split("\t")
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
         self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
@@ -54,12 +56,13 @@ class PlayerSuicideEvent(BF3BaseEvent):
 
     def __init__(self, type, eventData):
         self.type = type
+        self.tableName = 'playersuicide'
 
         splitLine = eventData.split("\t")
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
         self.playerName = splitLine[4].split(" ")[0].rstrip("\n")
 
@@ -72,12 +75,13 @@ class PlayerSwitchedTeamsEvent(BF3BaseEvent):
 
     def __init__(self, type, eventData):
         self.type = type
+        self.tableName = 'playerswitchedteams'
 
         splitLine = eventData.split("\t")
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
 
         extData = splitLine[4].split(" ")
@@ -104,12 +108,13 @@ class PlayerSwitchedSquadsEvent(BF3BaseEvent):
 
     def __init__(self, type, eventData):
         self.type = type
+        self.tableName = 'playerswitchedsquads'
 
         splitLine = eventData.split("\t")
         splitTime = splitLine[1].split(" ")
 
         #get the time
-        self.eventDate = splitTime[0]
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
 
         extData = splitLine[4].split(" ")
@@ -139,14 +144,12 @@ class PlayerKilledEvent(BF3BaseEvent):
 
         #set the type
         self.type = type
+        self.tableName = 'playerkilled'
 
         splitLine = deathLine.split("\t")
         splitTime = splitLine[1].split(" ")
 
-        #get the time
-        mysqlDate = "%s-%s-%s" % (splitTime[0][6:10], splitTime[0][0:2], splitTime[0][3:5])
-
-        self.eventDate = mysqlDate
+        self.eventDate = logDateToSqlDate(splitTime[0])
         self.eventTime = splitTime[1]
 
         #is it a headshot?
@@ -196,4 +199,19 @@ def writeCsv(eventList):
     for event in eventList:
         csvData = event.toCsv()
         outputFile.write(csvData)
-    outputFile.close()    
+    outputFile.close()
+
+def sqlInsertEvents(db, eventList):
+    type = eventList[0].type #fetch the type of event list we've been sent and use that as the CSV name
+    outputFile = open((type + ".csv"), "a")
+    if eventList[0].tableName != 'playerkilled':
+        for event in eventList:
+            db.query("INSERT INTO %s VALUES(NULL, '%s', '%s', '%s')" % (event.tableName, event.eventDate, event.eventTime, db.escape_string(event.playerName)))
+    else:
+        for event in eventList:
+            db.query("INSERT INTO playerkilled VALUES(NULL, '%s', '%s', '%s', '%s', '%s', '%s')" % (event.eventDate, event.eventTime, db.escape_string(event.playerName), db.escape_string(event.victimName), db.escape_string(event.weapon), event.headshot))
+    outputFile.close()
+
+def logDateToSqlDate(date):
+	sqlDate = (date[6:10] + "-" + date[0:2] + "-" + date[3:5])
+	return sqlDate
