@@ -1,3 +1,13 @@
 This file was created by PyCharm 1.5.4 for binding GitHub repository
 
-Currently it can only dump a list of all PlayerDeath events to a CSV file named output.csv.
+Work in progress...
+
+Takes a BF3 Procon log file, processes it, and uploads the event data to an SQL database.
+
+Requires a config.py with:
+  MYSQL_IP - server ip
+  MYSQL_USER - your mysql user
+  MYSQL_PASS - your mysql password
+
+Of course it won't work without proper tables setup, but I don't have documentation for that written yet.
+If you're interested in using my system with yours, plaese contact me.
